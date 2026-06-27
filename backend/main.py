@@ -7,7 +7,6 @@ from pydantic import BaseModel
 app = FastAPI()
 
 origins = [
-    "http://localhost:11434",
     "http://localhost:5173"
 ]
 
