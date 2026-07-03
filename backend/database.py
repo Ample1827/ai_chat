@@ -1,30 +1,34 @@
 import sqlite3
 
-with sqlite3.connect("memory.db") as connection:
+def get_connection():
     
-    cursor = connection.cursor()
-    
-    cursor.execute("""
-                   CREATE TABLE IF NOT EXISTS sessions(
-                    id
-                    created_at
-                    title   
-                   )
-                   
-                   
-                   """)
-    
-    cursor.execute("""
-                   CREATE TABLE IF NOT EXISTS messages(
-                    id
-                    session_id
-                    role
-                    content
-                    created_at
-                   ) 
-                   """)
-    
+    return sqlite3.connect("memory.db")
 
-# step 1 create new session_id for each new session
-# step 2 create messages for session_id
-# step 3 while in session_id append each message
+def init_db():
+    
+    with get_connection() as connection:
+        
+        cursor = connection.cursor()
+
+
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS sessions(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            title TEXT
+        );
+        """)
+        
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS messages(
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            session_id INTEGER,
+            role TEXT,
+            content TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (session_id) REFERENCES sessions(id)
+        ); 
+        """)
+    
+if __name__ == "__main__":
+    init_db()
