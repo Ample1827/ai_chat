@@ -1,10 +1,24 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 import httpx
 from pydantic import BaseModel
 
-app = FastAPI()
+from database import init_db
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app : FastAPI):
+    
+    print("Server starting up...")
+    
+    init_db()
+    
+    yield
+    
+    print("Server shutting down...")
+
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:5173"
